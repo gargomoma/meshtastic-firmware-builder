@@ -1,0 +1,64 @@
+name: Build Firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      firmware_branch:
+        description: "Branch or tag to checkout from meshtastic/firmware"
+        required: true
+        type: string
+        default: "develop"
+      variant:
+        description: "Variant to build (e.g., cutretech-esp32s3)"
+        required: true
+        type: string
+
+run-name: Build ${{ inputs.variant }}-${{ inputs.firmware_branch }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - name: Checkout this repository
+        uses: actions/checkout@v5
+        with:
+          path: builder
+      
+      - name: Checkout meshtastic/firmware
+        uses: actions/checkout@v5
+        with:
+          repository: meshtastic/firmware
+          ref: ${{ inputs.firmware_branch }}
+          path: firmware
+          submodules: recursive
+      
+      - name: Copy variants folder
+        run: cp -r builder/variants/* firmware/variants/
+      
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+      
+      - name: Build firmware
+        working-directory: firmware
+        run: |
+          pio run -e ${{ inputs.variant }}
+      
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: firmware-${{ inputs.variant }}-${{ inputs.firmware_branch }}
+          path: firmware/.pio/build/${{ inputs.variant }}/*.bin
+          if-no-files-found: error
