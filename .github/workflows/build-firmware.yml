@@ -47,7 +47,8 @@ jobs:
       - name: Build firmware
         working-directory: firmware
         run: |
-          pio run -e ${{ inputs.variant }}
+          pio run -e ${{ inputs.variant }} -t buildfs --disable-auto-clean
+          pio run -e ${{ inputs.variant }} --disable-auto-clean
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v6
