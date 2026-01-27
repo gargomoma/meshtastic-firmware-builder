@@ -12,19 +12,24 @@ on:
         description: "Variant to build (e.g., cutretech-esp32s3)"
         required: true
         type: string
+      is_esp32:
+        description: "Is esp32*?"
+        required: true
+        type: boolean
+        default: true
 
 run-name: Build ${{ inputs.variant }}-${{ inputs.firmware_branch }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v5
         with:
           path: builder
-      
+
       - name: Checkout meshtastic/firmware
         uses: actions/checkout@v5
         with:
@@ -32,23 +37,26 @@ jobs:
           ref: ${{ inputs.firmware_branch }}
           path: firmware
           submodules: recursive
-      
+
       - name: Copy variants folder
         run: cp -r builder/variants/* firmware/variants/
-      
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
-      
+
       - name: Install PlatformIO
         run: pip install --upgrade platformio
-      
+
+      - name: Run buildfs target (ESP32 BUILD WORKAROUND)
+        if: ${{ inputs.is_esp32 }}
+        working-directory: firmware
+        run: pio run -e ${{ inputs.variant }} -t buildfs --disable-auto-clean
+
       - name: Build firmware
         working-directory: firmware
-        run: |
-          pio run -e ${{ inputs.variant }} -t buildfs --disable-auto-clean
-          pio run -e ${{ inputs.variant }} --disable-auto-clean
+        run:  pio run -e ${{ inputs.variant }} --disable-auto-clean
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v6
