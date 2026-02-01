@@ -1,5 +1,6 @@
 #define HAS_SCREEN 0
 #define HAS_GPS 0
+// GPS_EN PIN 8
 
 #define UART_TX 43
 #define UART_RX 44
@@ -16,9 +17,9 @@
 #define NEOPIXEL_DATA 48                     // gpio pin used to send data to the neopixels
 #define NEOPIXEL_TYPE (NEO_GRB + NEO_KHZ800) // type of neopixels in use
 
-#define BATTERY_PIN 8 // Board uses pin3 but measures after the LDO
+#define BATTERY_PIN 7 // Board uses pin3 but measures after the LDO
 #define ADC_MULTIPLIER 2.0 // Adjust in configuration if needed, in my case ~2.025
-#define ADC_CHANNEL ADC1_GPIO1_CHANNEL
+#define ADC_CHANNEL ADC1_GPIO7_CHANNEL
 
 #define USE_SX1262 // E22-900, E22P-868, E22P-915 series
 #define USE_SX1268 // E22-400 series
