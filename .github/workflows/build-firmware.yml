@@ -12,17 +12,15 @@ on:
         description: "Variant to build (e.g., cutretech-esp32s3)"
         required: true
         type: string
-      is_esp32:
-        description: "Is esp32*?"
-        required: true
-        type: boolean
-        default: true
 
 run-name: Build ${{ inputs.variant }}-${{ inputs.firmware_branch }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      FIRMWARE_ARCHIVE: firmware-${{ inputs.variant }}-${{ inputs.firmware_branch }}.tar.xz
 
     steps:
       - name: Checkout this repository
@@ -49,21 +47,20 @@ jobs:
       - name: Install PlatformIO
         run: pip install --upgrade platformio
 
-      - name: Run buildfs target (ESP32 BUILD WORKAROUND)
-        if: ${{ inputs.is_esp32 }}
-        working-directory: firmware
-        run: pio run -e ${{ inputs.variant }} -t buildfs --disable-auto-clean
-
       - name: Build firmware
         working-directory: firmware
         run:  pio run -e ${{ inputs.variant }} --disable-auto-clean
 
-      - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v6
+
+      - name: Create firmware archive
+        run: |
+          cd firmware/.pio/build/${{ inputs.variant }}
+          tar -cJf ${{ env.FIRMWARE_ARCHIVE }} --ignore-failed-read *.bin *.uf2
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v7
         with:
-          name: firmware-${{ inputs.variant }}-${{ inputs.firmware_branch }}
-          path: |
-            firmware/.pio/build/${{ inputs.variant }}/*.bin
-            firmware/.pio/build/${{ inputs.variant }}/*.uf2
-          compression-level: 9
+          name: ${{ env.FIRMWARE_ARCHIVE }}
+          path: firmware/.pio/build/${{ inputs.variant }}/${{ env.FIRMWARE_ARCHIVE }}
+          archive: false
           if-no-files-found: error
