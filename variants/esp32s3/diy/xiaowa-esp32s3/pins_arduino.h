@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <variant.h>
 
-#define USB_VID 0x2886
-#define USB_PID 0x0059
+#define USB_VID 0x303A
+#define USB_PID 0x1001
 
 static const uint8_t TX = UART_TX;
 static const uint8_t RX = UART_RX;

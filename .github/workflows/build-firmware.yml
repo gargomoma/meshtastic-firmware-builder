@@ -39,6 +39,9 @@ jobs:
       - name: Copy variants folder
         run: cp -r builder/variants/* firmware/variants/
 
+      - name: Copy boards folder
+        run: cp -r builder/boards/* firmware/boards/
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
