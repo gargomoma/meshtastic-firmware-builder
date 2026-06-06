@@ -12,6 +12,11 @@ on:
         description: "Variant to build (e.g., cutretech-esp32s3)"
         required: true
         type: string
+      modify_mqtt_line:
+        description: "mqqt me bro"
+        required: true
+        type: boolean
+        default: false
 
 run-name: Build ${{ inputs.variant }}-${{ inputs.firmware_branch }}
 
@@ -41,6 +46,12 @@ jobs:
 
       - name: Copy boards folder
         run: cp -r builder/boards/* firmware/boards/
+
+      - name: Modify MQTT.cpp line (optional)
+        if: inputs.modify_mqtt_line == true
+        working-directory: firmware
+        run: |
+          sed -i 's#bool dontUplink = !mp_decoded.decoded.has_bitfield || !(mp_decoded.decoded.bitfield & BITFIELD_OK_TO_MQTT_MASK);#bool dontUplink = false;#' src/mqtt/MQTT.cpp
 
       - name: Set up Python
         uses: actions/setup-python@v6

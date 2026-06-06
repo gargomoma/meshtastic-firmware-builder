@@ -1,4 +1,3 @@
-//https://github.com/UnsignedArduino/ESP32-S3-Super-Mini-Test
 {
   "build": {
     "arduino":{
@@ -52,5 +51,6 @@
     "speed": 460800
   },
   "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html",
-  "vendor": "Espressif"
+  "vendor": "Espressif",
+  "credits": "https://github.com/UnsignedArduino/ESP32-S3-Super-Mini-Test"
 }
