@@ -12,10 +12,12 @@
 //#define LED_PIN 48
 //#define LED_STATE_ON 1
 
+/*
 #define HAS_NEOPIXEL                         // Enable the use of neopixels
 #define NEOPIXEL_COUNT 1                     // How many neopixels are connected
 #define NEOPIXEL_DATA 48                     // gpio pin used to send data to the neopixels
 #define NEOPIXEL_TYPE (NEO_GRB + NEO_KHZ800) // type of neopixels in use
+*/
 
 #define BATTERY_PIN 7 // Board uses pin3 but measures after the LDO
 #define ADC_MULTIPLIER 2.0 // Adjust in configuration if needed, in my case ~2.025
